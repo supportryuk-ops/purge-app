@@ -15,7 +15,7 @@ from google_auth_oauthlib.flow import InstalledAppFlow
 from googleapiclient.discovery import build
 
 SCOPES = ["https://mail.google.com/"]  # required for permanent delete
-HERE = os.path.dirname(os.path.abspath(__file__))
+HERE = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 CREDS_FILE = os.path.join(HERE, "credentials.json")
 TOKEN_FILE = os.path.join(HERE, "token.json")
 

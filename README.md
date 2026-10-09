@@ -1,7 +1,7 @@
 # Purge (Gmail Wipe web app)
 
 Static page `index.html`: signs in with Google in the browser and calls the Gmail API directly. No backend.
-(`gmail_wipe.py` is the equivalent local CLI.)
+(`cli/gmail_wipe.py` is the equivalent local CLI; run `pip install -r cli/requirements.txt` first.)
 
 ## 1. Google Cloud setup
 1. console.cloud.google.com -> create a project -> enable **Gmail API**.
