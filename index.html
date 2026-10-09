@@ -1,0 +1,302 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<meta name="color-scheme" content="light dark">
+<title>Purge</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%23e5484d'/%3E%3Cpath d='M10 11h12m-9 0V9h6v2m-7 3 .7 9h6.6l.7-9' stroke='%23fff' stroke-width='2' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
+<style>
+  :root {
+    --bg:#f4f5f8; --card:#ffffff; --text:#14161b; --muted:#667085; --line:#e4e7ec; --soft:#f8f9fb;
+    --accent:#3b5bdb; --accent-ink:#fff;
+    --danger:#d92d3a; --danger-soft:#fdecee; --ok:#12805c; --ok-soft:#e3f5ee; --warn-soft:#fff4e0; --warn:#9a5b00;
+    --shadow:0 1px 2px rgba(16,24,40,.05),0 8px 24px rgba(16,24,40,.06);
+  }
+  :root:not([data-theme="light"]) { }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg:#0e1013; --card:#171a1f; --text:#eceef2; --muted:#9097a3; --line:#272b33; --soft:#1c2026;
+      --accent:#7b93ff; --accent-ink:#0e1013;
+      --danger:#ff6169; --danger-soft:#2c1619; --ok:#4cd6a0; --ok-soft:#10261e; --warn-soft:#2a2111; --warn:#f0b34a;
+      --shadow:0 1px 2px rgba(0,0,0,.4),0 8px 24px rgba(0,0,0,.35);
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg:#0e1013; --card:#171a1f; --text:#eceef2; --muted:#9097a3; --line:#272b33; --soft:#1c2026;
+    --accent:#7b93ff; --accent-ink:#0e1013;
+    --danger:#ff6169; --danger-soft:#2c1619; --ok:#4cd6a0; --ok-soft:#10261e; --warn-soft:#2a2111; --warn:#f0b34a;
+    --shadow:0 1px 2px rgba(0,0,0,.4),0 8px 24px rgba(0,0,0,.35);
+  }
+  * { box-sizing:border-box; }
+  html { -webkit-text-size-adjust:100%; }
+  body { margin:0; background:var(--bg); color:var(--text); font:16px/1.5 Inter,system-ui,-apple-system,"Segoe UI",sans-serif; }
+  main { max-width:620px; margin:0 auto; padding:28px 16px 64px; }
+  header { display:flex; align-items:center; justify-content:space-between; margin-bottom:24px; }
+  .brand { display:flex; align-items:center; gap:10px; font-weight:700; font-size:1.15rem; letter-spacing:-.01em; }
+  .logo { width:34px; height:34px; border-radius:9px; background:var(--danger); display:grid; place-items:center; }
+  .logo svg { width:18px; height:18px; stroke:#fff; fill:none; stroke-width:2; stroke-linecap:round; stroke-linejoin:round; }
+  .icon-btn { width:38px; height:38px; padding:0; display:grid; place-items:center; border-radius:10px; }
+  .icon-btn svg { width:18px; height:18px; stroke:currentColor; fill:none; stroke-width:2; stroke-linecap:round; stroke-linejoin:round; }
+  h1 { font-size:1.9rem; line-height:1.2; letter-spacing:-.02em; margin:0 0 8px; }
+  .lead { color:var(--muted); margin:0 0 24px; }
+  .card { background:var(--card); border:1px solid var(--line); border-radius:16px; padding:22px; margin-bottom:16px; box-shadow:var(--shadow); }
+  .card h2 { font-size:.8rem; text-transform:uppercase; letter-spacing:.08em; color:var(--muted); margin:0 0 14px; font-weight:600; }
+  button { font:inherit; font-weight:600; padding:11px 18px; border-radius:10px; border:1px solid var(--line); background:var(--card); color:var(--text); cursor:pointer; transition:transform .05s, opacity .15s, background .15s; }
+  button:hover:not(:disabled) { background:var(--soft); }
+  button:active:not(:disabled) { transform:translateY(1px); }
+  button:focus-visible, input:focus-visible { outline:3px solid color-mix(in srgb,var(--accent) 45%,transparent); outline-offset:2px; }
+  button:disabled { opacity:.45; cursor:not-allowed; }
+  button.primary { background:var(--accent); color:var(--accent-ink); border-color:var(--accent); }
+  button.primary:hover:not(:disabled) { background:var(--accent); opacity:.92; }
+  button.danger { background:var(--danger); color:#fff; border-color:var(--danger); width:100%; padding:14px; font-size:1.02rem; }
+  button.danger:hover:not(:disabled) { background:var(--danger); opacity:.92; }
+  .gbtn { display:inline-flex; align-items:center; gap:10px; }
+  .gbtn svg { width:18px; height:18px; }
+  .row { display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap; }
+  .who { display:flex; align-items:center; gap:10px; min-width:0; }
+  .avatar { width:36px; height:36px; border-radius:50%; background:var(--accent); color:var(--accent-ink); display:grid; place-items:center; font-weight:700; text-transform:uppercase; flex:none; }
+  .who span { overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .total { display:flex; align-items:baseline; gap:10px; margin:18px 0 4px; }
+  .total b { font-size:2.8rem; line-height:1; letter-spacing:-.03em; font-variant-numeric:tabular-nums; }
+  .muted { color:var(--muted); font-size:.9rem; }
+  .grid { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin-top:16px; }
+  .stat { background:var(--soft); border:1px solid var(--line); border-radius:12px; padding:10px 12px; }
+  .stat b { display:block; font-size:1.15rem; font-variant-numeric:tabular-nums; }
+  .stat span { font-size:.78rem; color:var(--muted); }
+  .opts { display:grid; gap:10px; }
+  .opt { display:flex; gap:12px; align-items:flex-start; padding:14px; border:1.5px solid var(--line); border-radius:12px; cursor:pointer; background:var(--card); }
+  .opt input { margin-top:4px; accent-color:var(--accent); }
+  .opt:has(input:checked) { border-color:var(--accent); background:color-mix(in srgb,var(--accent) 8%,var(--card)); }
+  .opt.perm:has(input:checked) { border-color:var(--danger); background:var(--danger-soft); }
+  .opt strong { display:block; }
+  .tag { font-size:.72rem; font-weight:700; padding:2px 8px; border-radius:99px; margin-left:6px; vertical-align:2px; }
+  .tag.ok { background:var(--ok-soft); color:var(--ok); }
+  .tag.bad { background:var(--danger-soft); color:var(--danger); }
+  .banner { display:flex; gap:10px; padding:12px 14px; border-radius:12px; background:var(--warn-soft); color:var(--warn); font-size:.9rem; margin-top:14px; }
+  .banner.bad { background:var(--danger-soft); color:var(--danger); }
+  label.f { display:block; font-size:.9rem; font-weight:600; margin:0 0 6px; }
+  input[type=text] { width:100%; font:inherit; padding:12px 14px; border-radius:10px; border:1.5px solid var(--line); background:var(--soft); color:var(--text); margin-bottom:14px; }
+  input[type=text].match { border-color:var(--ok); }
+  .bar { height:10px; background:var(--line); border-radius:99px; overflow:hidden; }
+  .bar > div { height:100%; width:0; background:var(--accent); border-radius:99px; transition:width .3s; }
+  .bar.done > div { background:var(--ok); }
+  .prog { display:flex; justify-content:space-between; margin:8px 0 0; font-size:.9rem; font-variant-numeric:tabular-nums; }
+  pre { background:var(--soft); border:1px solid var(--line); border-radius:10px; padding:10px 12px; max-height:160px; overflow:auto; font:.82rem/1.5 ui-monospace,Menlo,Consolas,monospace; margin:14px 0 0; white-space:pre-wrap; }
+  .steps { display:flex; gap:8px; margin-bottom:20px; }
+  .steps div { flex:1; height:4px; border-radius:99px; background:var(--line); }
+  .steps div.on { background:var(--accent); }
+  footer { text-align:center; color:var(--muted); font-size:.8rem; margin-top:28px; }
+  [hidden] { display:none !important; }
+  @media (max-width:480px) { h1 { font-size:1.55rem; } .total b { font-size:2.3rem; } .grid { grid-template-columns:repeat(2,1fr); } }
+  @media (prefers-reduced-motion:reduce) { * { transition:none !important; } }
+</style>
+</head>
+<body>
+<main>
+  <header>
+    <div class="brand"><div class="logo"><svg viewBox="0 0 24 24"><path d="M5 7h14M10 7V5h4v2M7 7l1 12h8l1-12"/></svg></div>Purge</div>
+    <button class="icon-btn" id="btnTheme" aria-label="Toggle theme" title="Toggle theme">
+      <svg viewBox="0 0 24 24"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
+    </button>
+  </header>
+
+  <h1>Clear out your entire Gmail.</h1>
+  <p class="lead">Inbox, Spam, Promotions, Social, Sent, Trash — everything, in one run. It all happens in your browser; nothing goes anywhere except Google.</p>
+
+  <div class="steps" aria-hidden="true"><div class="on" id="s1"></div><div id="s2"></div><div id="s3"></div></div>
+
+  <section class="card" id="signin">
+    <h2>Step 1 · Connect</h2>
+    <button class="primary gbtn" id="btnSignin">
+      <svg viewBox="0 0 24 24"><path fill="#fff" d="M21.35 11.1H12v2.9h5.35c-.5 2.4-2.6 3.9-5.35 3.9a6 6 0 1 1 0-12c1.5 0 2.8.55 3.85 1.45l2.1-2.1A9 9 0 1 0 12 21c5.2 0 8.6-3.65 8.6-8.8 0-.4-.05-.75-.1-1.1z"/></svg>
+      Sign in with Google
+    </button>
+    <p class="muted" style="margin:12px 0 0">You'll see an “unverified app” notice — click <b>Advanced → Continue</b>. This is expected for a personal tool.</p>
+    <div class="banner bad" id="cfgNote" hidden>⚠ Set <code>CLIENT_ID</code> in index.html before signing in.</div>
+  </section>
+
+  <div id="panel" hidden>
+    <section class="card">
+      <div class="row">
+        <div class="who"><div class="avatar" id="avatar">?</div><span id="acct"></span></div>
+        <button id="btnSignout">Switch account</button>
+      </div>
+      <div class="total"><b id="count">–</b><span class="muted">messages in total</span></div>
+      <div class="grid" id="stats"></div>
+    </section>
+
+    <section class="card">
+      <h2>Step 2 · Choose mode</h2>
+      <div class="opts">
+        <label class="opt"><input type="radio" name="mode" value="trash" checked>
+          <div><strong>Move to Trash <span class="tag ok">Recoverable</span></strong><span class="muted">Everything goes to Trash. Google removes it after 30 days.</span></div></label>
+        <label class="opt perm"><input type="radio" name="mode" value="delete">
+          <div><strong>Delete permanently <span class="tag bad">Irreversible</span></strong><span class="muted">Skips Trash. Messages cannot be recovered.</span></div></label>
+      </div>
+      <div class="banner" id="modeNote">ℹ Tip: start with “Move to Trash” — you can always empty Trash afterwards.</div>
+    </section>
+
+    <section class="card">
+      <h2>Step 3 · Confirm</h2>
+      <label class="f" for="confirm">Type <b id="emailHint"></b> to continue</label>
+      <input type="text" id="confirm" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="your email address">
+      <button class="danger" id="btnRun" disabled>Purge mailbox</button>
+      <div id="progress" hidden style="margin-top:18px">
+        <div class="bar" id="barWrap"><div id="bar"></div></div>
+        <div class="prog"><span id="progText">Starting…</span><button id="btnStop" style="padding:4px 12px">Stop</button></div>
+      </div>
+      <pre id="log" hidden></pre>
+    </section>
+  </div>
+
+  <footer>Runs entirely client-side · your token never leaves this tab</footer>
+</main>
+
+<script src="https://accounts.google.com/gsi/client" async defer></script>
+<script>
+// ====== CONFIG ======
+// OAuth client ID of type "Web application" (see README). Not a secret.
+const CLIENT_ID = "PASTE_YOUR_CLIENT_ID.apps.googleusercontent.com";
+// ====================
+const SCOPE = "https://mail.google.com/";
+const API = "https://gmail.googleapis.com/gmail/v1/users/me";
+const $ = id => document.getElementById(id);
+let token = null, email = "", total = 0, stopFlag = false, running = false;
+
+// ---- theme ----
+(function () {
+  try { const t = localStorage.getItem("theme"); if (t) document.documentElement.dataset.theme = t; } catch {}
+})();
+$("btnTheme").onclick = () => {
+  const cur = document.documentElement.dataset.theme ||
+    (matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+  const next = cur === "dark" ? "light" : "dark";
+  document.documentElement.dataset.theme = next;
+  try { localStorage.setItem("theme", next); } catch {}
+};
+
+if (CLIENT_ID.startsWith("PASTE_")) $("cfgNote").hidden = false;
+
+const log = m => { const l = $("log"); l.hidden = false; l.textContent += m + "\n"; l.scrollTop = l.scrollHeight; };
+const sleep = ms => new Promise(r => setTimeout(r, ms));
+const fmt = n => Number(n || 0).toLocaleString();
+const setStep = n => ["s1","s2","s3"].forEach((id, i) => $(id).classList.toggle("on", i < n));
+
+async function api(path, opts = {}, tries = 5) {
+  for (let i = 0; i < tries; i++) {
+    const res = await fetch(API + path, {
+      ...opts,
+      headers: { Authorization: "Bearer " + token, "Content-Type": "application/json" },
+    });
+    if (res.ok) return res.status === 204 ? null : res.json().catch(() => null);
+    if ((res.status === 429 || res.status >= 500) && i < tries - 1) { await sleep(1000 * 2 ** i); continue; }
+    throw new Error(res.status + " " + (await res.text()));
+  }
+}
+
+async function listIds(query, limit = 1000) {
+  let ids = [], pageToken = "";
+  while (ids.length < limit) {
+    const p = new URLSearchParams({ includeSpamTrash: "true", maxResults: "500" });
+    if (query) p.set("q", query);
+    if (pageToken) p.set("pageToken", pageToken);
+    const r = await api("/messages?" + p);
+    ids.push(...(r.messages || []).map(m => m.id));
+    pageToken = r.nextPageToken;
+    if (!pageToken) break;
+  }
+  return ids.slice(0, limit);
+}
+
+const LABELS = [["INBOX","Inbox"],["CATEGORY_PROMOTIONS","Promotions"],["CATEGORY_SOCIAL","Social"],["SENT","Sent"],["SPAM","Spam"],["TRASH","Trash"]];
+async function refreshProfile() {
+  const p = await api("/profile");
+  email = p.emailAddress; total = p.messagesTotal;
+  $("acct").textContent = email;
+  $("avatar").textContent = email[0];
+  $("emailHint").textContent = email;
+  $("count").textContent = fmt(total);
+  const rows = await Promise.all(LABELS.map(([id, name]) =>
+    api("/labels/" + id).then(l => [name, l.messagesTotal]).catch(() => [name, "–"])));
+  $("stats").innerHTML = rows.map(([n, c]) => `<div class="stat"><b>${fmt(c)}</b><span>${n}</span></div>`).join("");
+}
+
+$("btnSignin").onclick = () => {
+  if (CLIENT_ID.startsWith("PASTE_")) return;
+  google.accounts.oauth2.initTokenClient({
+    client_id: CLIENT_ID,
+    scope: SCOPE,
+    callback: async r => {
+      if (r.error) return alert("Sign-in failed: " + r.error);
+      token = r.access_token;
+      try { await refreshProfile(); } catch (e) { return alert("Could not load mailbox: " + e.message); }
+      $("signin").hidden = true; $("panel").hidden = false; setStep(2);
+    },
+  }).requestAccessToken();
+};
+
+$("btnSignout").onclick = () => {
+  if (running) return;
+  if (token) google.accounts.oauth2.revoke(token, () => {});
+  token = null; $("panel").hidden = true; $("signin").hidden = false;
+  $("confirm").value = ""; $("btnRun").disabled = true; setStep(1);
+};
+
+function syncConfirm() {
+  const ok = $("confirm").value.trim().toLowerCase() === email.toLowerCase() && !running;
+  $("btnRun").disabled = !ok;
+  $("confirm").classList.toggle("match", ok);
+  if (ok) setStep(3);
+}
+$("confirm").oninput = syncConfirm;
+
+document.querySelectorAll("input[name=mode]").forEach(r => r.onchange = () => {
+  const perm = r.value === "delete" && r.checked;
+  const note = $("modeNote");
+  note.classList.toggle("bad", perm);
+  note.textContent = perm
+    ? "⚠ Permanent deletion cannot be undone. Make sure you have a backup (Google Takeout) if you might need anything."
+    : "ℹ Tip: start with “Move to Trash” — you can always empty Trash afterwards.";
+  $("btnRun").textContent = perm ? "Permanently delete everything" : "Purge mailbox";
+});
+
+$("btnStop").onclick = () => { stopFlag = true; $("progText").textContent = "Stopping after current batch…"; };
+
+$("btnRun").onclick = async () => {
+  const trash = document.querySelector("input[name=mode]:checked").value === "trash";
+  if (!confirm(`${trash ? "Move to Trash" : "PERMANENTLY DELETE"} all mail in ${email}?`)) return;
+  stopFlag = false; running = true;
+  $("btnRun").disabled = true; $("progress").hidden = false; $("barWrap").classList.remove("done");
+  $("bar").style.width = "0%"; $("log").textContent = "";
+  const start = total; let done = 0;
+  try {
+    while (!stopFlag) {
+      const ids = await listIds(trash ? "-in:trash" : "");
+      if (!ids.length) break;
+      if (trash) {
+        await api("/messages/batchModify", { method: "POST", body: JSON.stringify({ ids, addLabelIds: ["TRASH"], removeLabelIds: ["INBOX"] }) });
+      } else {
+        await api("/messages/batchDelete", { method: "POST", body: JSON.stringify({ ids }) });
+      }
+      done += ids.length;
+      const pct = Math.min(100, (done / Math.max(start, 1)) * 100);
+      $("bar").style.width = pct + "%";
+      $("progText").textContent = `${fmt(done)} of ~${fmt(start)} processed`;
+      log(`Batch OK — ${fmt(done)} processed`);
+    }
+    if (stopFlag) { log("Stopped."); }
+    else { log("Done."); $("barWrap").classList.add("done"); $("bar").style.width = "100%"; $("progText").textContent = `Finished — ${fmt(done)} messages ${trash ? "moved to Trash" : "deleted"}`; }
+  } catch (e) {
+    log("Error: " + e.message);
+    if (/401/.test(e.message)) log("Session expired — switch account / sign in again.");
+    $("progText").textContent = "Stopped due to an error";
+  }
+  running = false; $("btnStop").hidden = false;
+  try { await refreshProfile(); } catch {}
+  $("confirm").value = ""; syncConfirm();
+};
+</script>
+</body>
+</html>
