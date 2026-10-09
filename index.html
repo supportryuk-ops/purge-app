@@ -62,6 +62,8 @@
   .total b { font-size:2.8rem; line-height:1; letter-spacing:-.03em; font-variant-numeric:tabular-nums; }
   .muted { color:var(--muted); font-size:.9rem; }
   .grid { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin-top:16px; }
+  .exact { display:flex; align-items:center; gap:12px; flex-wrap:wrap; margin-top:16px; }
+  .stat.hl { border-color:var(--accent); }
   .stat { background:var(--soft); border:1px solid var(--line); border-radius:12px; padding:10px 12px; }
   .stat b { display:block; font-size:1.15rem; font-variant-numeric:tabular-nums; }
   .stat span { font-size:.78rem; color:var(--muted); }
@@ -123,8 +125,13 @@
         <div class="who"><div class="avatar" id="avatar">?</div><span id="acct"></span></div>
         <button id="btnSignout">Switch account</button>
       </div>
-      <div class="total"><b id="count">–</b><span class="muted">messages in total</span></div>
+      <div class="total"><b id="count">–</b><span class="muted" id="countLbl">messages (Gmail estimate)</span></div>
       <div class="grid" id="stats"></div>
+      <div class="exact">
+        <button class="primary" id="btnCount">Count exactly</button>
+        <span class="muted" id="countStatus">Lists every message, incl. Spam &amp; Trash, to give a precise count.</span>
+      </div>
+      <div class="grid" id="exactStats" hidden></div>
     </section>
 
     <section class="card">
@@ -261,6 +268,50 @@ document.querySelectorAll("input[name=mode]").forEach(r => r.onchange = () => {
     : "ℹ Tip: start with “Move to Trash” — you can always empty Trash afterwards.";
   $("btnRun").textContent = perm ? "Permanently delete everything" : "Purge mailbox";
 });
+
+// ---- exact counting: lists every message ID (incl. Spam & Trash) and counts them ----
+async function countMessages(query, onProgress) {
+  let n = 0, pageToken = "";
+  do {
+    const p = new URLSearchParams({ includeSpamTrash: "true", maxResults: "500", fields: "messages/id,nextPageToken" });
+    if (query) p.set("q", query);
+    if (pageToken) p.set("pageToken", pageToken);
+    const r = await api("/messages?" + p);
+    n += (r.messages || []).length;
+    pageToken = r.nextPageToken || "";
+    if (onProgress) onProgress(n);
+  } while (pageToken);
+  return n;
+}
+const EXACT_PARTS = [
+  ["Inbox", "in:inbox"], ["Sent", "in:sent"], ["Drafts", "in:drafts"],
+  ["Spam", "in:spam"], ["Trash", "in:trash"],
+  ["Promotions", "category:promotions"], ["Social", "category:social"],
+  ["Archived / other", "-in:inbox -in:sent -in:drafts -in:spam -in:trash"],
+];
+async function runExactCount() {
+  if (running) return;
+  const btn = $("btnCount"), st = $("countStatus"), box = $("exactStats");
+  btn.disabled = true; box.hidden = true;
+  try {
+    const all = await countMessages("", n => { st.textContent = `Counting all mail… ${fmt(n)}`; });
+    $("count").textContent = fmt(all);
+    $("countLbl").textContent = "messages (exact, incl. Spam & Trash)";
+    const rows = [["All mail", all, true]];
+    box.innerHTML = ""; box.hidden = false;
+    const render = () => { box.innerHTML = rows.map(([n, c, hl]) => `<div class="stat${hl ? " hl" : ""}"><b>${fmt(c)}</b><span>${n}</span></div>`).join(""); };
+    render();
+    for (const [name, q] of EXACT_PARTS) {
+      st.textContent = `Counting ${name}…`;
+      rows.push([name, await countMessages(q), false]); render();
+    }
+    st.textContent = `Exact count finished at ${new Date().toLocaleTimeString()}. Folders overlap (e.g. Promotions are in Inbox), so they won't sum to the total.`;
+  } catch (e) {
+    st.textContent = "Count failed: " + e.message;
+  }
+  btn.disabled = false;
+}
+$("btnCount").onclick = runExactCount;
 
 $("btnStop").onclick = () => { stopFlag = true; $("progText").textContent = "Stopping after current batch…"; };
 
