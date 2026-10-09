@@ -129,6 +129,7 @@
       <div class="grid" id="stats"></div>
       <div class="exact">
         <button class="primary" id="btnCount">Count exactly</button>
+        <button id="btnCountTrash">Count Trash only</button>
         <span class="muted" id="countStatus">Lists every message, incl. Spam &amp; Trash, to give a precise count.</span>
       </div>
       <div class="grid" id="exactStats" hidden></div>
@@ -292,7 +293,7 @@ const EXACT_PARTS = [
 async function runExactCount() {
   if (running) return;
   const btn = $("btnCount"), st = $("countStatus"), box = $("exactStats");
-  btn.disabled = true; box.hidden = true;
+  btn.disabled = $("btnCountTrash").disabled = true; box.hidden = true;
   try {
     const all = await countMessages("", n => { st.textContent = `Counting all mail… ${fmt(n)}`; });
     $("count").textContent = fmt(all);
@@ -309,9 +310,23 @@ async function runExactCount() {
   } catch (e) {
     st.textContent = "Count failed: " + e.message;
   }
-  btn.disabled = false;
+  btn.disabled = $("btnCountTrash").disabled = false;
 }
 $("btnCount").onclick = runExactCount;
+async function runTrashCount() {
+  if (running) return;
+  const st = $("countStatus"), box = $("exactStats");
+  $("btnCount").disabled = $("btnCountTrash").disabled = true;
+  try {
+    const n = await countMessages("in:trash", c => { st.textContent = `Counting Trash… ${fmt(c)}`; });
+    box.hidden = false;
+    box.innerHTML = `<div class="stat hl"><b>${fmt(n)}</b><span>In Trash (exact)</span></div>`;
+    st.textContent = `Trash count finished at ${new Date().toLocaleTimeString()}.`;
+  } catch (e) { st.textContent = "Count failed: " + e.message; }
+  $("btnCount").disabled = $("btnCountTrash").disabled = false;
+}
+$("btnCountTrash").onclick = runTrashCount;
+
 
 $("btnStop").onclick = () => { stopFlag = true; $("progText").textContent = "Stopping after current batch…"; };
 
